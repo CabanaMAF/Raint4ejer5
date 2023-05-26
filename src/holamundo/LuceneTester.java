@@ -57,7 +57,7 @@ public class LuceneTester {
     	    String[] searcharray = choice.split(" ");
     	    for (int i = 0; i < searcharray.length; i++)
     	    {
-    	    	System.out.println("Resultados de búsqueda de palabra " + (i+1) + ": " + searcharray[i]);
+    	    	System.out.println("RRResultados de búsqueda de palabra " + (i+1) + ": " + searcharray[i]);
     	    	tester.searchUsingFuzzyQuery(searcharray[i]);
     	    }
     		
