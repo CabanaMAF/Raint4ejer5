@@ -121,7 +121,7 @@ public class LuceneTester {
       for(ScoreDoc scoreDoc : hits.scoreDocs) {
          Document doc = searcher.getDocument(scoreDoc);
          System.out.print("Puntuacion: "+ scoreDoc.score + " ");
-         System.out.println("Archivo: "+ doc.get("filepath"));
+         System.out.println("Archivo: "+ doc.get("filename"));
       }
       
       // Cerramos el buscador
