@@ -1,10 +1,11 @@
 package holamundo;
 import java.io.File;
 import java.io.FileFilter;
+
+// Método utilizado para filtrar los archivos .txt
 public class TextFileFilter implements FileFilter {
- @Override
- public boolean accept(File pathname) {
- return pathname.getName().toLowerCase().endsWith(".txt");
- }
+	@Override
+	public boolean accept(File pathname) {
+		return pathname.getName().toLowerCase().endsWith(".txt");
+	}
 }
-//se define el tipo de archivo que admitira el indexador

@@ -19,52 +19,55 @@ import holamundo.TextFileFilter;
 
 public class LuceneTester {
 	
-	 String indexDir = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/tp4 Lucene funciona";
-	 String dataDir = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/BoletinesParaIndexar/txt";
-	 Indexer indexer;
-   Searcher searcher;
+	// Ruta donde se guardará el índice	
+	String indexDir = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/tp4 Lucene funciona";
+	// Ruta donde se encuentran los archivos a indexar
+	String dataDir = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/BoletinesParaIndexar/txt";
+	
+	// Declaración del índice y el buscador
+	Indexer indexer;
+	Searcher searcher;
 
-   public static void main(String[] args) {
+	public static void main(String[] args) {
+		
+	   // Declaración para realizar la prueba
 	   LuceneTester tester;
       
-      try {
-    	  
-    	  tester = new LuceneTester();
-    	  tester.createIndex();
-    	  //Buscar ek texto aqui
-    	  
-    	  
-    	  BufferedReader br;
-    		String choice = "";
-    		System.out.println("***** Indexador Lucene, Buscador de Prueba ******");
+	   try {
+		   	// Creamos una instancia de esta clase
+	    	tester = new LuceneTester();
+	    	
+	    	// Se crea el índice
+	    	tester.createIndex();
+	    	
+	    	// Entrada de palabras a buscar	    	  
+	    	BufferedReader br;
+    		String textInput = "";
+    		System.out.println("=============== Indexador LUCENE ===============");
     		System.out.println("Ingresa palabra a buscar:");
     		
     		br = new BufferedReader(new InputStreamReader(System.in));
     		try {
-    			choice = br.readLine();
+    			textInput = br.readLine();
     		} catch (IOException e) {
     			e.printStackTrace();
     		}
     		try {
     			br.close();
     		} catch (IOException e1) {
-    			// TODO Auto-generated catch block
     			e1.printStackTrace();
     		}
     		
-    		//Opcional para frases (palabras múltiples)
-    		
-    	    String[] searcharray = choice.split(" ");
-    	    for (int i = 0; i < searcharray.length; i++)
-    	    {
-    	    	System.out.println("RRResultados de búsqueda de palabra " + (i+1) + ": " + searcharray[i]);
-    	    	tester.searchUsingFuzzyQuery(searcharray[i]);
+    		// Guardamos la consulta en una lista de cadenas
+    	    String[] searcharray = textInput.split(" ");
+    	    
+    	    // Ejecutamos la busqueda para cada palabra de la lista
+    	    for (int i = 0; i < searcharray.length; i++){
+    	    	System.out.println("Resultados de búsqueda de palabra " + (i+1) + ": " + searcharray[i]);
+    	    	tester.searchQuery(searcharray[i]);
     	    }
-    		
-     		 //descomentar para busqueda de una sola palabra          
-    		
-    		 //tester.searchUsingFuzzyQuery(choice);
-
+    		         		
+    		 //tester.searchQuery(textInput);
          
       } catch (IOException e) {
          e.printStackTrace();
@@ -73,39 +76,55 @@ public class LuceneTester {
       }
    }
    
+   // Método utilizado para crear el índice
    private void createIndex() throws IOException{
+	   
+	   // Creamos una instancia de la clase Indexer
 	   indexer = new Indexer(indexDir);
 	   int numIndexed;
 	   long startTime = System.currentTimeMillis();
+	   
+	   // Creamos el índice con el metodo createIndex
+	   // declarado en la clase Indexer
 	   numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
+	   
 	   long endTime = System.currentTimeMillis();
+	   
+	   // Cerramos el indexer
 	   indexer.close();
-	   System.out.println(numIndexed+" Archivo indexado, tiempo empleado: "
-	   +(endTime-startTime)+" ms");
-	   }
+	   
+	   // Mostramos por pantalla el tiempo de indexado
+	   System.out.println("Archivos indexados: "+numIndexed+" - Tiempo empleado: "+(endTime-startTime)+" ms");
+   }
    
-   
-   private void searchUsingFuzzyQuery(String searchQuery)
-      throws IOException, ParseException{
-      searcher = new Searcher(indexDir);
+   // Método utilizado para buscar en el índice   
+   private void searchQuery(String searchQuery) throws IOException, ParseException{
+	   
+      // Creamos una instancia del buscador Searcher
+	  searcher = new Searcher(indexDir);
       long startTime = System.currentTimeMillis();
-      //crea termino para buscar el nombre del archivo
-      //Term term = new Term(LuceneConstants.FILE_NAME, searchQuery);
-      Term term = new Term(LuceneConstants.CONTENTS, searchQuery);
-      //crea el objeto consulta difusa 
-      Query query = new FuzzyQuery(term);
-      //do the search
+
+      // Creamos el término a buscar
+      Term term = new Term("contents", searchQuery);
       
+      // Crea la consulta 
+      Query query = new FuzzyQuery(term);
+      
+      // Ejecuta la búsqueda
       TopDocs hits = searcher.search(query);
       long endTime = System.currentTimeMillis();
-
-      System.out.println(hits.totalHits +
-         " documentos encontrados. Time :" + (endTime - startTime) + "ms");
+      
+      // Mostramos por pantalla cantidad de resultados y el tiempo de búsqueda
+      System.out.println(hits.totalHits + " documentos encontrados. Time :" + (endTime - startTime) + "ms");
+      
+      // Para cada documento mostramos su puntuación de búsqueda y su ruta
       for(ScoreDoc scoreDoc : hits.scoreDocs) {
          Document doc = searcher.getDocument(scoreDoc);
          System.out.print("Puntuacion: "+ scoreDoc.score + " ");
-         System.out.println("Archivo: "+ doc.get(LuceneConstants.FILE_PATH));
+         System.out.println("Archivo: "+ doc.get("filepath"));
       }
+      
+      // Cerramos el buscador
       searcher.close();
    }
 }
