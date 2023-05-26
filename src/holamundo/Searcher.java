@@ -43,7 +43,7 @@ public class Searcher {
    // Retorna un objeto TopDocs
    public TopDocs search(String busquedaDeConsulta) throws IOException, ParseException{
 	   consulta = analizadorConsulta.parse(busquedaDeConsulta);
-      return buscadorIndice.search(query, 10);
+      return buscadorIndice.search(consulta, 10);
    }
    
    // Método que realiza la búsqueda con un objeto Query

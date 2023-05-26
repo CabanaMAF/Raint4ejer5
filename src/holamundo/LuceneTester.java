@@ -13,20 +13,20 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
-import holamundo.indexador;
+import holamundo.Indexer;
 import holamundo.TextFileFilter;
 
 
 public class LuceneTester {
 	
 	// Ruta donde se guardará el índice	
-	String direccionIndice = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/tp4 Lucene funciona";
+	String direccionIndice = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/tp4 Lucene indice";
 	// Ruta donde se encuentran los archivos a indexar
-	String direccionDatos = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/BoletinesParaIndexar/txt";
+	String direccionDatos = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/booksSpanish";
 	
 	// Declaración del índice y el buscador
-	indexador indexador;
-	buscador buscador;
+	Indexer indexador;
+	Searcher buscador;
 
 	public static void main(String[] args) {
 		
@@ -80,7 +80,7 @@ public class LuceneTester {
    private void createIndex() throws IOException{
 	   
 	   // Creamos una instancia de la clase indexador
-	   indexador = new indexador(direccionIndice);
+	   indexador = new Indexer(direccionIndice);
 	   int numeroDeIndexados;
 	   long tiempoInicio = System.currentTimeMillis();
 	   
@@ -101,7 +101,7 @@ public class LuceneTester {
    private void searchQuery(String searchQuery) throws IOException, ParseException{
 	   
       // Creamos una instancia del buscador buscador
-	  buscador = new buscador(direccionIndice);
+	  buscador = new Searcher(direccionIndice);
       long startTime = System.currentTimeMillis();
 
       // Creamos el término a buscar

@@ -55,7 +55,7 @@ public class Indexer {
 		documento.add(ruta);
 		
 		// Retornamos el documento
-		return document;
+		return documento;
 	 }
 	
 	// Método que obtiene un documento de un archivo
@@ -80,8 +80,8 @@ public class Indexer {
 		   - Se puede leer
 		   - Es un archivo .txt   */
 		for (File archivo : archivos) {
-			 if(!archivo.isDirectory() && !archivo.isHidden() && archivo.exists() && archivo.canRead() && archivo.accept(file)){
-				 indexFile(file); // Lo indexa con el método anterior
+			 if(!archivo.isDirectory() && !archivo.isHidden() && archivo.exists() && archivo.canRead() && filtro.accept(archivo)){
+				 indexFile(archivo); // Lo indexa con el método anterior
 			 }
 		}
 		// Retornamos el numero de documentos indexados
