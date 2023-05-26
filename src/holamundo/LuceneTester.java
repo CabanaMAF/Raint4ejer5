@@ -13,20 +13,20 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
-import holamundo.Indexer;
+import holamundo.indexador;
 import holamundo.TextFileFilter;
 
 
 public class LuceneTester {
 	
 	// Ruta donde se guardará el índice	
-	String indexDir = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/tp4 Lucene funciona";
+	String direccionIndice = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/tp4 Lucene funciona";
 	// Ruta donde se encuentran los archivos a indexar
-	String dataDir = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/BoletinesParaIndexar/txt";
+	String direccionDatos = "d:/fi/year 4/Recuperacion avanzada de informacion/tareas/BoletinesParaIndexar/txt";
 	
 	// Declaración del índice y el buscador
-	Indexer indexer;
-	Searcher searcher;
+	indexador indexador;
+	buscador buscador;
 
 	public static void main(String[] args) {
 		
@@ -41,19 +41,19 @@ public class LuceneTester {
 	    	tester.createIndex();
 	    	
 	    	// Entrada de palabras a buscar	    	  
-	    	BufferedReader br;
+	    	BufferedReader lector;
     		String textInput = "";
     		System.out.println("=============== Indexador LUCENE ===============");
     		System.out.println("Ingresa palabra a buscar:");
     		
-    		br = new BufferedReader(new InputStreamReader(System.in));
+    		lector = new BufferedReader(new InputStreamReader(System.in));
     		try {
-    			textInput = br.readLine();
+    			textInput = lector.readLine();
     		} catch (IOException e) {
     			e.printStackTrace();
     		}
     		try {
-    			br.close();
+    			lector.close();
     		} catch (IOException e1) {
     			e1.printStackTrace();
     		}
@@ -79,52 +79,52 @@ public class LuceneTester {
    // Método utilizado para crear el índice
    private void createIndex() throws IOException{
 	   
-	   // Creamos una instancia de la clase Indexer
-	   indexer = new Indexer(indexDir);
-	   int numIndexed;
-	   long startTime = System.currentTimeMillis();
+	   // Creamos una instancia de la clase indexador
+	   indexador = new indexador(direccionIndice);
+	   int numeroDeIndexados;
+	   long tiempoInicio = System.currentTimeMillis();
 	   
 	   // Creamos el índice con el metodo createIndex
-	   // declarado en la clase Indexer
-	   numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
+	   // declarado en la clase indexador
+	   numeroDeIndexados = indexador.createIndex(direccionDatos, new TextFileFilter());
 	   
-	   long endTime = System.currentTimeMillis();
+	   long tiempoFinal = System.currentTimeMillis();
 	   
-	   // Cerramos el indexer
-	   indexer.close();
+	   // Cerramos el indexador
+	   indexador.close();
 	   
 	   // Mostramos por pantalla el tiempo de indexado
-	   System.out.println("Archivos indexados: "+numIndexed+" - Tiempo empleado: "+(endTime-startTime)+" ms");
+	   System.out.println("Archivos indexados: "+numeroDeIndexados+" - Tiempo empleado: "+(tiempoFinal-tiempoInicio)+" ms");
    }
    
    // Método utilizado para buscar en el índice   
    private void searchQuery(String searchQuery) throws IOException, ParseException{
 	   
-      // Creamos una instancia del buscador Searcher
-	  searcher = new Searcher(indexDir);
+      // Creamos una instancia del buscador buscador
+	  buscador = new buscador(direccionIndice);
       long startTime = System.currentTimeMillis();
 
       // Creamos el término a buscar
-      Term term = new Term("contents", searchQuery);
+      Term termino = new Term("contents", searchQuery);
       
       // Crea la consulta 
-      Query query = new FuzzyQuery(term);
+      Query consulta = new FuzzyQuery(termino);
       
       // Ejecuta la búsqueda
-      TopDocs hits = searcher.search(query);
+      TopDocs coincidencias = buscador.search(consulta);
       long endTime = System.currentTimeMillis();
       
       // Mostramos por pantalla cantidad de resultados y el tiempo de búsqueda
-      System.out.println(hits.totalHits + " documentos encontrados. Time :" + (endTime - startTime) + "ms");
+      System.out.println(coincidencias.totalHits + " documentos encontrados. Time :" + (endTime - startTime) + "ms");
       
       // Para cada documento mostramos su puntuación de búsqueda y su ruta
-      for(ScoreDoc scoreDoc : hits.scoreDocs) {
-         Document doc = searcher.getDocument(scoreDoc);
-         System.out.print("Puntuacion: "+ scoreDoc.score + " ");
+      for(ScoreDoc puntuacionDoc : coincidencias.scoreDocs) {
+         Document doc = buscador.getDocument(puntuacionDoc);
+         System.out.print("Puntuacion: "+ puntuacionDoc.score + " ");
          System.out.println("Archivo: "+ doc.get("filename"));
       }
       
       // Cerramos el buscador
-      searcher.close();
+      buscador.close();
    }
 }

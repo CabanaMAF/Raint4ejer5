@@ -20,45 +20,45 @@ public class Searcher {
 	
 	// Atributos
 	// Buscador de índice
-	IndexSearcher indexSearcher;
+	IndexSearcher buscadorIndice;
 	// Analizador de consultas
-	QueryParser queryParser;
+	QueryParser analizadorConsulta;
 	// Consulta
-	Query query;
+	Query consulta;
    
    // Constructor
-   public Searcher(String indexDirectoryPath) throws IOException{
+   public Searcher(String rutaDirectorioIndice) throws IOException{
 	   
 	  // Abrimos el directorio del índice
-      Directory indexDirectory = FSDirectory.open(new File(indexDirectoryPath));
+      Directory directorioIndice = FSDirectory.open(new File(rutaDirectorioIndice));
       
       // Instanciamos el analizador y la consulta
-      indexSearcher = new IndexSearcher(indexDirectory);
-      queryParser = new QueryParser(Version.LUCENE_36,"contents",new StandardAnalyzer(Version.LUCENE_36));
+      buscadorIndice = new IndexSearcher(directorioIndice);
+      analizadorConsulta = new QueryParser(Version.LUCENE_36,"contents",new StandardAnalyzer(Version.LUCENE_36));
    }
    
    // **************** METODOS DE LA CLASE SEARCHER ****************
 
    // Método que realiza la búsqueda con una cadena
    // Retorna un objeto TopDocs
-   public TopDocs search(String searchQuery) throws IOException, ParseException{
-      query = queryParser.parse(searchQuery);
-      return indexSearcher.search(query, 10);
+   public TopDocs search(String busquedaDeConsulta) throws IOException, ParseException{
+	   consulta = analizadorConsulta.parse(busquedaDeConsulta);
+      return buscadorIndice.search(query, 10);
    }
    
    // Método que realiza la búsqueda con un objeto Query
    // Retorna un objeto TopDocs
-   public TopDocs search(Query query) throws IOException, ParseException{
-      return indexSearcher.search(query, 10);
+   public TopDocs search(Query consulta) throws IOException, ParseException{
+      return buscadorIndice.search(consulta, 10);
    }
    
    // Método que retorna un objeto de tipo Document
-   public Document getDocument(ScoreDoc scoreDoc) throws CorruptIndexException, IOException{
-	  return indexSearcher.doc(scoreDoc.doc);	
+   public Document getDocument(ScoreDoc puntuacionDoc) throws CorruptIndexException, IOException{
+	  return buscadorIndice.doc(puntuacionDoc.doc);	
    }
    
    // Método que cierra el buscador
    public void close() throws IOException{
-      indexSearcher.close();
+	   buscadorIndice.close();
    }
 }

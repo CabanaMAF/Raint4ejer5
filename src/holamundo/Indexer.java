@@ -17,42 +17,42 @@ public class Indexer {
 	
 	// Atributos 
 	// Declaramos el Indexador
-	private IndexWriter writer; 
+	private IndexWriter escritor; 
   
   	// Constructor
- 	public Indexer(String indexDirectoryPath) throws IOException{
+ 	public Indexer(String rutaDirectorioIndice) throws IOException{
  		
 		 // Directorio que contendrá los índices
-		 Directory indexDirectory = FSDirectory.open(new File(indexDirectoryPath));
+		 Directory directorioIndice = FSDirectory.open(new File(rutaDirectorioIndice));
 		 
 		 // Creamos el indexador o escritor de índice
-		 writer = new IndexWriter(indexDirectory, new StandardAnalyzer(Version.LUCENE_36),true,IndexWriter.MaxFieldLength.UNLIMITED);
+		 escritor = new IndexWriter(directorioIndice, new StandardAnalyzer(Version.LUCENE_36),true,IndexWriter.MaxFieldLength.UNLIMITED);
 	 }
  	
  	// **************** METODOS DE LA CLASE INDEXER ****************
  	
  	// Método para cerrar el indexador
 	public void close() throws CorruptIndexException, IOException{
-		 writer.close();
+		escritor.close();
 	}
 	
 	// Método que recibe un archivo y retorna un documento
-	private Document getDocument(File file) throws IOException{
+	private Document getDocument(File archivo) throws IOException{
 		
 		// Creamos un nuevo documento
-		Document document = new Document();
+		Document documento = new Document();
 		
 		// Indexamos el contenido del archivo
-		Field contentField = new Field("contents",new FileReader(file));
+		Field contenido = new Field("contents",new FileReader(archivo));
 		// Indexamos el nombre del archivo
-		Field fileNameField = new Field("filename",file.getName(),Field.Store.YES,Field.Index.NOT_ANALYZED);
+		Field nombre = new Field("filename",archivo.getName(),Field.Store.YES,Field.Index.NOT_ANALYZED);
 		// Indexamos la ruta del archivo
-		Field filePathField = new Field("filepath",file.getCanonicalPath(),Field.Store.YES,Field.Index.NOT_ANALYZED);
+		Field ruta = new Field("filepath",archivo.getCanonicalPath(),Field.Store.YES,Field.Index.NOT_ANALYZED);
 		
 		// Añadimos los atributos obtenidos al documento creado
-		document.add(contentField);
-		document.add(fileNameField);
-		document.add(filePathField);
+		documento.add(contenido);
+		documento.add(nombre);
+		documento.add(ruta);
 		
 		// Retornamos el documento
 		return document;
@@ -60,18 +60,18 @@ public class Indexer {
 	
 	// Método que obtiene un documento de un archivo
 	// y lo añade al indexador (Lo indexa)
-	private void indexFile(File file) throws IOException{
-		System.out.println("Indexando "+file.getCanonicalPath());
-		Document document = getDocument(file);
-		writer.addDocument(document);
+	private void indexFile(File archivo) throws IOException{
+		System.out.println("Indexando "+archivo.getCanonicalPath());
+		Document document = getDocument(archivo);
+		escritor.addDocument(document);
 	}
 	
 	// Método que crea el índice.
 	// Recibe una ruta y un filtro de archivos .txt
-	public int createIndex(String dataDirPath, FileFilter filter) throws IOException{
+	public int createIndex(String rutaDirectorioDatos, FileFilter filtro) throws IOException{
 		
 		// Obtenemos todos los archivos en la ruta indicada
-		File[] files = new File(dataDirPath).listFiles();
+		File[] archivos = new File(rutaDirectorioDatos).listFiles();
 		
 		/* Para cada archivo nos aseguramos de que:
 		   - No es un directorio
@@ -79,12 +79,12 @@ public class Indexer {
 		   - Existe
 		   - Se puede leer
 		   - Es un archivo .txt   */
-		for (File file : files) {
-			 if(!file.isDirectory() && !file.isHidden() && file.exists() && file.canRead() && filter.accept(file)){
+		for (File archivo : archivos) {
+			 if(!archivo.isDirectory() && !archivo.isHidden() && archivo.exists() && archivo.canRead() && archivo.accept(file)){
 				 indexFile(file); // Lo indexa con el método anterior
 			 }
 		}
 		// Retornamos el numero de documentos indexados
-		return writer.numDocs(); 
+		return escritor.numDocs(); 
 	}
 }
